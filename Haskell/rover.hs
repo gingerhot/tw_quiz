@@ -34,16 +34,18 @@ nextDirect d "R" = case d of "W" -> "N"
                              "E" -> "S"
                              "S" -> "W"
 
-nextCoordinate :: Coordinate -> Direction -> Coordinate
-nextCoordinate (x, y) d = case d of "W" -> (x - 1, y)
-                                    "E" -> (x + 1, y)
-                                    "N" -> (x, y + 1)
-                                    "S" -> (x, y - 1)
+nextCoordinate :: Coordinate -> Direction -> Movement -> Coordinate
+nextCoordinate (x, y) d "M" = case d of "W" -> (x - 1, y)
+                                        "E" -> (x + 1, y)
+                                        "N" -> (x, y + 1)
+                                        "S" -> (x, y - 1)
+nextCoordinate (x, y) _ _ = (x, y)
 
 move :: MoveInfo -> Maybe MoveInfo
 move (((x, y), d), ms) = Just ((nc, nd), tail ms)
-  where nd = nextDirect d $ head ms
-        nc = nextCoordinate (x, y) nd
+  where m  = head ms
+        nd = nextDirect d m
+        nc = nextCoordinate (x, y) nd m
 
 -- check if the rover in the valid area after a series of runs
 checkResult :: Coordinate -> Maybe MoveInfo -> String
